@@ -8,9 +8,7 @@ set splitright
 " keyboard shortcuts
 inoremap jj <ESC>
 
-" highlight search
-"set hlsearch
-"nmap <leader>hl :let @/ = ""<CR>
+
 
 " gui settings
 if (&t_Co == 256 || has('gui_running'))
@@ -68,7 +66,7 @@ function MoveToNextTab()
   "preparing new window
   let l:tab_nr = tabpagenr('$')
   let l:cur_buf = bufnr('%')
-  if tabpagenr() < tab_nr
+  if tabpagenr() < l:tab_nr
     close!
     if l:tab_nr == tabpagenr('$')
       tabnext
@@ -91,14 +89,8 @@ abbr rli Rails.logger.info ""<esc>1b
 abbr rle Rails.logger.error ""<esc>1b
 abbr rlw Rails.logger.warning ""<esc>1b
 abbr cl console.log("")<esc>1b
-" abbr [ []<esc>1b
-" abbr { {}<esc>1b
-" abbr [ []<esc>i
 abbr { {}<esc>i
-" abbr " ""<esc>i
-" abbr ' ''<esc>i
 abbr ## #{}<esc>i
-"abbr #{ #{}<esc>i
 abbr ins inspect
 abbr treu true
 abbr teh the
@@ -111,8 +103,8 @@ abbr xwm Xiangwei Meng
 
 " Go to last active tab
 au TabLeave * let g:lasttab = tabpagenr()
-nnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
-vnoremap <silent> <c-l> :exe "tabn ".g:lasttab<cr>
+nnoremap <silent> <leader>lt :exe "tabn ".g:lasttab<cr>
+vnoremap <silent> <leader>lt :exe "tabn ".g:lasttab<cr>
 
 " Go to tab by number
 noremap <leader>1 1gt
@@ -132,7 +124,6 @@ nnoremap <silent> <c-n> gt<cr>
 nnoremap <silent> <c-p> gT<cr>
 noremap <leader>p :tabp<cr>
 noremap <leader>new :tabnew<cr>
-noremap <leader>r :tabnew#<cr>
 noremap <leader>j 10j
 noremap <leader>k 10k
 
@@ -145,9 +136,6 @@ noremap <leader>cc :cclose<CR>
 
 nnoremap <silent> <c-s> :w<cr>
 nnoremap <silent> <c-t> :tabnew<cr>
-" nnoremap <silent> <c-w> :tabclose<cr> :tabprev<cr>
-nnoremap <silent> <c-h> :tabm -<CR>
-nnoremap <silent> <c-l> :tabm +<CR>
 " Move current tab to first position
 nnoremap <silent> <leader>tf :tabm 0<CR>
 " Move current tab to previous position (one position to the left)
@@ -156,19 +144,14 @@ nnoremap <silent> <leader>tl :tabm -<CR>
 nnoremap <silent> <leader>tr :tabm +<CR>
 
 " maximize current split pane
-nnoremap <silent> mm :MaximizerToggle<CR>
+if exists(':MaximizerToggle')
+  nnoremap <silent> mm :MaximizerToggle<CR>
+endif
 
-" Vim navigatiov
+" Vim navigation
 nnoremap th  :tabfirst<CR>
-nnoremap tk  :tabnext<CR>
-nnoremap tj  :tabprev<CR>
 nnoremap tl  :tablast<CR>
-" nnoremap tt  :tabedit<Space>
-" nnoremap tn  :tabnext<Space>
 nnoremap tm  :tabm<Space>
-" Alternatively use
-"nnoremap th :tabnext<CR>
-"nnoremap tl :tabprev<CR>
 nnoremap tn :tabnew<CR>
 nnoremap tt :tab ter<CR>
 
@@ -213,15 +196,13 @@ set ssop-=folds      " do not store folds
 " Git
 function GitDiff()
     :silent write
-    :silent execute '!git diff --color=always -- ' . expand('%:p') . ' | less --RAW-CONTROL-CHARS'
+    :silent execute '!git diff --color=always -- ' . shellescape(expand('%:p')) . ' | less --RAW-CONTROL-CHARS'
     :redraw!
 endfunction
 
 " Vimscript
 
 nnoremap <leader>gd :call GitDiff()<cr>
-" Run external command 
-" nnoremap <leader>c :echo 'hello'<cr>
 
 " Open vimrc
 :nnoremap <leader>ev :vsplit $MYVIMRC<cr>
@@ -295,7 +276,7 @@ let g:which_key_map['n'] = 'tab-next'
 let g:which_key_map['p'] = 'tab-prev'
 let g:which_key_map[','] = 'tab-next'
 let g:which_key_map['new'] = 'new-tab'
-let g:which_key_map['r'] = 'recent-tab'
+let g:which_key_map['lt'] = 'last-active-tab'
 
 " Files and buffers
 let g:which_key_map['a'] = 'ag-search'
@@ -337,6 +318,13 @@ let g:which_key_map.s = {
       \ }
 
 " Window management
+let g:which_key_map.t = {
+      \ 'name' : '+tabs',
+      \ 'f' : 'move-tab-first',
+      \ 'l' : 'move-tab-left',
+      \ 'r' : 'move-tab-right',
+      \ }
+
 let g:which_key_map.m = {
       \ 'name' : '+move/maximize',
       \ 'n' : 'move-next-tab',
