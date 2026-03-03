@@ -8,7 +8,7 @@ Centralised Vim configuration synced across multiple servers. Use `.vimrc.local`
 
 ```bash
 # Clone repo
-git clone https://github.com/yourusername/vim-config.git ~/.vim-config
+git clone https://github.com/bridgewoodx/vim-config.git ~/.vim-config
 ln -s ~/.vim-config/.vimrc ~/.vimrc
 
 # Install Vundle and plugins
@@ -23,7 +23,7 @@ touch ~/.vimrc.local
 
 ```bash
 # Same steps as above
-git clone https://github.com/yourusername/vim-config.git ~/.vim-config
+git clone https://github.com/bridgewoodx/vim-config.git ~/.vim-config
 ln -s ~/.vim-config/.vimrc ~/.vimrc
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 vim +PluginInstall +qall
