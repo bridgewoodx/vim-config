@@ -1,6 +1,6 @@
 # Vim Configuration Setup
 
-Centralized Vim configuration synced across multiple servers. Use `.vimrc.local` for machine-specific settings.
+Centralised Vim configuration synced across multiple servers. Use `.vimrc.local` for machine-specific settings.
 
 ## Quick Setup
 
@@ -64,12 +64,23 @@ let g:gitgutter_enabled = 0
 
 ## Updates
 
+### Manual Updates
+
 ```bash
 # Update config
 cd ~/.vim-config && git pull
 
 # Update plugins
 vim +PluginUpdate +qall
+```
+
+### Automatic Updates on Login
+
+Add to your `~/.bashrc` or `~/.zshrc` to automatically update your configuration when you log in:
+
+```bash
+# Auto-update vim config on login (runs in background)
+(cd ~/.vim-config && git pull --quiet) &
 ```
 
 ## Troubleshooting
@@ -81,7 +92,7 @@ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 vim +PluginInstall +qall
 ```
 
-**Colors look wrong?** Add to `~/.vimrc.local`:
+**Colours look wrong?** Add to `~/.vimrc.local`:
 ```vim
 set t_Co=256
 ```
