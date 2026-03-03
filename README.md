@@ -68,7 +68,7 @@ let g:gitgutter_enabled = 0
 
 ```bash
 # Update config
-cd ~/.vim-config && git pull
+cd ~/vim-config && git pull
 
 # Update plugins
 vim +PluginUpdate +qall
@@ -80,8 +80,41 @@ Add to your `~/.bashrc` or `~/.zshrc` to automatically update your configuration
 
 ```bash
 # Auto-update vim config on login (runs in background)
-(cd ~/.vim-config && git pull --quiet) &
+(cd ~/vim-config && git pull --quiet) &
 ```
+
+## Managing Plugins
+
+### Adding Plugins
+
+1. **Edit** `~/vim-config/.vimrc.bundles` for shared plugins:
+   ```vim
+   Plugin 'tpope/vim-fugitive'
+   Plugin 'preservim/nerdtree'
+   ```
+
+2. **Or edit** `~/vim-config/.vimrc.bundles.local` for personal plugins (optional)
+
+3. **Install**:
+   ```bash
+   vim +PluginInstall +qall
+   ```
+
+4. **Commit and push** (for shared plugins):
+   ```bash
+   cd ~/vim-config
+   git add .vimrc.bundles
+   git commit -m "Add vim-fugitive plugin"
+   git push
+   ```
+
+### Removing Plugins
+
+1. Remove or comment out the plugin line in `.vimrc.bundles`
+2. Run cleanup:
+   ```bash
+   vim +PluginClean +qall
+   ```
 
 ## Troubleshooting
 
@@ -92,12 +125,18 @@ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 vim +PluginInstall +qall
 ```
 
+**Bundles file not found?**
+```bash
+# Make sure bundles file exists
+touch ~/vim-config/.vimrc.bundles
+# Or copy from your existing setup
+cp ~/.vimrc.bundles ~/vim-config/.vimrc.bundles
+```
+
 **Colours look wrong?** Add to `~/.vimrc.local`:
 ```vim
 set t_Co=256
 ```
-
-## Dependencies
 
 **Required:** Vim 7.4+, Git
 

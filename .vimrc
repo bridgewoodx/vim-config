@@ -10,8 +10,8 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 " Load plugins from bundle files (includes Vundle.vim plugin declaration)
-if filereadable(expand("~/vim-config/.vimrc.bundles"))
-  source ~/vim-config/.vimrc.bundles
+if filereadable(expand("~/.vim-config/.vimrc.bundles"))
+  source ~/.vim-config/.vimrc.bundles
 endif
 if filereadable(expand("~/.vimrc.bundles.local"))
   source ~/.vimrc.bundles.local
