@@ -234,6 +234,7 @@ noremap <leader>, :tabnext<cr>
 noremap <leader>,, :tabp<cr>
 nnoremap <silent> <c-n> gt<cr>
 nnoremap <silent> <c-p> gT<cr>
+nnoremap gb gT
 noremap <leader>tp :tabp<cr>
 noremap <leader>new :tabnew<cr>
 noremap <leader>j 10j
@@ -249,11 +250,11 @@ noremap <leader>cc :cclose<CR>
 nnoremap <silent> <c-s> :w<cr>
 nnoremap <silent> <c-t> :tabnew<cr>
 " Move current tab to first position
-nnoremap <silent> <leader>tf :tabm 0<CR>
+nnoremap <silent> <leader>mf :tabm 0<CR>
 " Move current tab to previous position (one position to the left)
-nnoremap <silent> <leader>tl :tabm -<CR>
+nnoremap <silent> <leader>ml :tabm -<CR>
 " Move current tab to next position (one position to the right)
-nnoremap <silent> <leader>tr :tabm +<CR>
+nnoremap <silent> <leader>mr :tabm +<CR>
 
 " maximize current split pane
 if exists(':MaximizerToggle')
@@ -278,6 +279,7 @@ nnoremap <leader>a :Ag<space>
 nnoremap <leader>bl :CtrlPBuffer<CR>
 nnoremap <leader>d :NERDTreeToggle<CR>
 nnoremap <leader>f :NERDTreeFind<CR>
+nnoremap <leader>t :CtrlP<CR>
 nnoremap <leader>p :CtrlP<CR>
 nnoremap <leader>T :CtrlPClearCache<CR>:CtrlP<CR>
 nnoremap <leader>] :TagbarToggle<CR>
@@ -385,11 +387,9 @@ augroup filetype_vim
 augroup END
 " }}}
 
-" vim-which-key configuration (only if plugin is loaded)
-if exists('g:loaded_which_key')
-  nnoremap <silent> <leader> :<c-u>WhichKey ','<CR>
-  vnoremap <silent> <leader> :<c-u>WhichKeyVisual ','<CR>
-endif
+" vim-which-key configuration
+nnoremap <silent> <leader> :<c-u>WhichKey ','<CR>
+vnoremap <silent> <leader> :<c-u>WhichKeyVisual ','<CR>
 set timeoutlen=500
 
 " Define which-key dictionary
@@ -407,6 +407,7 @@ let g:which_key_map['8'] = 'tab-8'
 let g:which_key_map['9'] = 'tab-9'
 let g:which_key_map['0'] = 'tab-last'
 let g:which_key_map['n'] = 'tab-next'
+let g:which_key_map['t'] = 'ctrlp'
 let g:which_key_map['p'] = 'ctrlp'
 let g:which_key_map['tp'] = 'tab-prev'
 let g:which_key_map[','] = 'tab-next'
@@ -456,17 +457,13 @@ let g:which_key_map.s = {
       \ }
 
 " Tab and window management
-let g:which_key_map.t = {
-      \ 'name' : '+tab-move',
+let g:which_key_map.m = {
+      \ 'name' : '+move',
+      \ 'n' : 'move-win-next-tab',
+      \ 'p' : 'move-win-prev-tab',
       \ 'f' : 'move-tab-first',
       \ 'l' : 'move-tab-left',
       \ 'r' : 'move-tab-right',
-      \ }
-
-let g:which_key_map.m = {
-      \ 'name' : '+move-window',
-      \ 'n' : 'move-next-tab',
-      \ 'p' : 'move-prev-tab',
       \ }
 
 let g:which_key_map.w = {
@@ -492,10 +489,8 @@ let g:which_key_map['V'] = 'reload-vimrc'
 let g:which_key_map['"'] = 'quote-word'
 let g:which_key_map["'"] = 'single-quote-word'
 
-" Register the dictionary (only if which-key is loaded)
-if exists('g:loaded_which_key')
-  call which_key#register(',', "g:which_key_map")
-endif
+" Register the dictionary
+call which_key#register(',', "g:which_key_map")
 
 " vim-which-key styling
 let g:which_key_use_floating_win = 0
