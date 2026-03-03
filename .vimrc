@@ -1,14 +1,124 @@
+" don't bother with vi compatibility
+set nocompatible
+
+" enable syntax highlighting
+syntax enable
+
+" configure Vundle
+filetype on " without this vim emits a zero exit status, later, because of :ft off
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" install Vundle bundles
+if filereadable(expand("~/.vimrc.bundles"))
+  source ~/.vimrc.bundles
+  source ~/.vimrc.bundles.local
+endif
+
+call vundle#end()
+
+" ensure ftdetect et al work by including this after the Vundle stuff
+filetype plugin indent on
+
+set autoindent
+set autoread                                                 " reload files when changed on disk, i.e. via `git checkout`
+set backspace=2                                              " Fix broken backspace in some setups
+set backupcopy=yes                                           " see :help crontab
+set clipboard=unnamed                                        " yank and paste with the system clipboard
+set directory-=.                                             " don't store swapfiles in the current directory
+set encoding=utf-8
+set expandtab                                                " expand tabs to spaces
+set ignorecase                                               " case-insensitive search
+set incsearch                                                " search as you type
+set laststatus=2                                             " always show statusline
+set list                                                     " show trailing whitespace
+set listchars=tab:▸\ ,trail:▫
+set number                                                   " show line numbers
+set ruler                                                    " show where you are
+set scrolloff=3                                              " show context above/below cursorline
+set shiftwidth=2                                             " normal mode indentation commands use 2 spaces
+set showcmd
+set smartcase                                                " case-sensitive search if any caps
+set softtabstop=2                                            " insert mode tab and backspace use 2 spaces
+set tabstop=8                                                " actual tabs occupy 8 characters
+set wildignore=log/**,node_modules/**,target/**,tmp/**,*.rbc
+set wildmenu                                                 " show a navigable menu for tab completion
+set wildmode=longest,list,full
+
+" Enable basic mouse behavior such as resizing buffers.
+set mouse=a
+if exists('$TMUX')  " Support resizing in tmux
+  set ttymouse=xterm2
+endif
+
+" .vimrc.local settings
 set nocursorline " don't highlight current line
 set tags+=gems.tags
-
 set hlsearch
 set splitbelow
 set splitright
 
 " keyboard shortcuts
+let mapleader = ','
 inoremap jj <ESC>
 
+" plugin settings
+let g:ctrlp_match_window = 'order:ttb,max:20'
+let g:NERDSpaceDelims=1
+let g:gitgutter_enabled = 0
 
+" use the new SnipMate parser
+let g:snipMate = { 'snippet_version' : 1 }
+
+" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
+if executable('ag')
+  " Use Ag over Grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+endif
+
+" File type settings
+augroup filetype_settings
+  autocmd!
+  " fdoc is yaml
+  autocmd BufRead,BufNewFile *.fdoc set filetype=yaml
+  " md is markdown
+  autocmd BufRead,BufNewFile *.md set filetype=markdown
+  autocmd BufRead,BufNewFile *.md set spell
+augroup END
+
+" Rails.vim helpers
+augroup rails_helpers
+  autocmd!
+  autocmd User Rails silent! Rnavcommand decorator      app/decorators            -glob=**/* -suffix=_decorator.rb
+  autocmd User Rails silent! Rnavcommand observer       app/observers             -glob=**/* -suffix=_observer.rb
+  autocmd User Rails silent! Rnavcommand feature        features                  -glob=**/* -suffix=.feature
+  autocmd User Rails silent! Rnavcommand job            app/jobs                  -glob=**/* -suffix=_job.rb
+  autocmd User Rails silent! Rnavcommand mediator       app/mediators             -glob=**/* -suffix=_mediator.rb
+  autocmd User Rails silent! Rnavcommand stepdefinition features/step_definitions -glob=**/* -suffix=_steps.rb
+augroup END
+
+" Window management
+augroup window_management
+  autocmd!
+  " automatically rebalance windows on vim resize
+  autocmd VimResized * :wincmd =
+augroup END
+
+" Fix Cursor in TMUX
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
+" Don't copy the contents of an overwritten selection.
+vnoremap p "_dP
 
 " gui settings
 if (&t_Co == 256 || has('gui_running'))
@@ -122,7 +232,7 @@ noremap <leader>, :tabnext<cr>
 noremap <leader>,, :tabp<cr>
 nnoremap <silent> <c-n> gt<cr>
 nnoremap <silent> <c-p> gT<cr>
-noremap <leader>p :tabp<cr>
+noremap <leader>tp :tabp<cr>
 noremap <leader>new :tabnew<cr>
 noremap <leader>j 10j
 noremap <leader>k 10k
@@ -160,14 +270,34 @@ nnoremap tt :tab ter<CR>
 nnoremap H :bp<cr>
 nnoremap L :bn<cr>
 
-" Use leader-[hjkl] to select the active split!
-" nmap <leader>k :wincmd k<CR>
-" nmap <leader>j :wincmd j<CR>
-nmap <leader>h :wincmd h<CR>
-nmap <leader>l :wincmd l<CR>
+" Additional keyboard shortcuts from main .vimrc
+nnoremap <leader>al :Align
+nnoremap <leader>a :Ag<space>
+nnoremap <leader>bl :CtrlPBuffer<CR>
+nnoremap <leader>d :NERDTreeToggle<CR>
+nnoremap <leader>f :NERDTreeFind<CR>
+nnoremap <leader>p :CtrlP<CR>
+nnoremap <leader>T :CtrlPClearCache<CR>:CtrlP<CR>
+nnoremap <leader>] :TagbarToggle<CR>
+nnoremap <leader><space> :call whitespace#strip_trailing()<CR>
+nnoremap <leader>gg :GitGutterToggle<CR>
+noremap <silent> <leader>V :source ~/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
+
+" in case you forgot to sudo
+cnoremap w!! %!sudo tee > /dev/null %
+
+" Use leader-w[hjkl] to select the active split!
+nmap <leader>wh :wincmd h<CR>
+nmap <leader>wj :wincmd j<CR>
+nmap <leader>wk :wincmd k<CR>
+nmap <leader>wl :wincmd l<CR>
 
 " Save to Session.vim. The following is not working
 " nnoremap <lead>q :mks!<CR> :q<CR>
+
+" You might want to set these session options in your vimrc. Especially options is annoying when you've changed your vimrc after you've saved the session.
+set ssop-=options    " do not store global and local values in a session
+set ssop-=folds      " do not store folds
 
 " relative path (src/foo.txt)
 nnoremap <leader>cr :let @*=expand("%")<CR>
@@ -264,36 +394,39 @@ let g:which_key_map = {}
 " Tab navigation group
 let g:which_key_map['1'] = 'tab-1'
 let g:which_key_map['2'] = 'tab-2'
-" let g:which_key_map['3'] = 'tab-3'
-" let g:which_key_map['4'] = 'tab-4'
-" let g:which_key_map['5'] = 'tab-5'
-" let g:which_key_map['6'] = 'tab-6'
-" let g:which_key_map['7'] = 'tab-7'
-" let g:which_key_map['8'] = 'tab-8'
-" let g:which_key_map['9'] = 'tab-9'
+let g:which_key_map['3'] = 'tab-3'
+let g:which_key_map['4'] = 'tab-4'
+let g:which_key_map['5'] = 'tab-5'
+let g:which_key_map['6'] = 'tab-6'
+let g:which_key_map['7'] = 'tab-7'
+let g:which_key_map['8'] = 'tab-8'
+let g:which_key_map['9'] = 'tab-9'
 let g:which_key_map['0'] = 'tab-last'
 let g:which_key_map['n'] = 'tab-next'
-let g:which_key_map['p'] = 'tab-prev'
+let g:which_key_map['p'] = 'ctrlp'
+let g:which_key_map['tp'] = 'tab-prev'
 let g:which_key_map[','] = 'tab-next'
 let g:which_key_map['new'] = 'new-tab'
 let g:which_key_map['lt'] = 'last-active-tab'
 
 " Files and buffers
 let g:which_key_map['a'] = 'ag-search'
-let g:which_key_map['b'] = 'buffer-list'
-let g:which_key_map['bb'] = 'last-buffer'
+let g:which_key_map.b = {
+      \ 'name' : '+buffers',
+      \ 'b' : 'last-buffer',
+      \ 'l' : 'buffer-list',
+      \ }
 let g:which_key_map['d'] = 'nerdtree-toggle'
 let g:which_key_map['f'] = 'nerdtree-find'
-let g:which_key_map['t'] = 'ctrlp'
 let g:which_key_map['T'] = 'ctrlp-clear'
 
-" Copy paths
+" Copy paths, quickfix, and close tab
 let g:which_key_map.c = {
-      \ 'name' : '+copy-paths',
-      \ 'r' : 'relative-path',
-      \ 'a' : 'absolute-path',
-      \ 'f' : 'filename',
-      \ 'd' : 'directory',
+      \ 'name' : '+copy/quickfix/close',
+      \ 'r' : 'copy-rel-path',
+      \ 'a' : 'copy-abs-path',
+      \ 'f' : 'copy-filename',
+      \ 'd' : 'copy-directory',
       \ 'o' : 'quickfix-open',
       \ 'c' : 'quickfix-close',
       \ 't' : 'close-tab',
@@ -303,6 +436,7 @@ let g:which_key_map.c = {
 let g:which_key_map.g = {
       \ 'name' : '+git',
       \ 'd' : 'diff',
+      \ 'g' : 'gutter-toggle',
       \ }
 
 " Vim config
@@ -317,18 +451,26 @@ let g:which_key_map.s = {
       \ 'v' : 'source-vimrc',
       \ }
 
-" Window management
+" Tab and window management
 let g:which_key_map.t = {
-      \ 'name' : '+tabs',
+      \ 'name' : '+tab-move',
       \ 'f' : 'move-tab-first',
       \ 'l' : 'move-tab-left',
       \ 'r' : 'move-tab-right',
       \ }
 
 let g:which_key_map.m = {
-      \ 'name' : '+move/maximize',
+      \ 'name' : '+move-window',
       \ 'n' : 'move-next-tab',
       \ 'p' : 'move-prev-tab',
+      \ }
+
+let g:which_key_map.w = {
+      \ 'name' : '+windows',
+      \ 'h' : 'window-left',
+      \ 'j' : 'window-down',
+      \ 'k' : 'window-up',
+      \ 'l' : 'window-right',
       \ }
 
 " Testing (rubytest)
@@ -337,10 +479,9 @@ let g:which_key_map['['] = 'run-file'
 let g:which_key_map['/'] = 'run-last-test'
 
 " Other
-let g:which_key_map['l'] = 'align'
+let g:which_key_map['al'] = 'align'
 let g:which_key_map['j'] = 'down-10'
 let g:which_key_map['k'] = 'up-10'
-let g:which_key_map['h'] = 'window-left'
 let g:which_key_map[']'] = 'tagbar-toggle'
 let g:which_key_map[' '] = 'strip-whitespace'
 let g:which_key_map['V'] = 'reload-vimrc'
@@ -357,13 +498,15 @@ let g:which_key_position = 'botright'
 let g:which_key_vertical = 0
 
 " Custom colors for which-key
-autocmd! FileType which_key
-autocmd  FileType which_key set laststatus=0 noshowmode noruler
-  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+augroup which_key_colors
+  autocmd!
+  autocmd FileType which_key set laststatus=0 noshowmode noruler
+  autocmd FileType which_key autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+augroup END
 
 " Better color scheme for which-key window
 highlight WhichKey guifg=#61afef ctermfg=75
-highlight WhichKeySeperator guifg=#98c379 ctermfg=114
+highlight WhichKeySeparator guifg=#98c379 ctermfg=114
 highlight WhichKeyGroup guifg=#c678dd ctermfg=176
 highlight WhichKeyDesc guifg=#abb2bf ctermfg=249
 highlight WhichKeyFloating guibg=#282c34 ctermbg=235
