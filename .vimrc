@@ -383,9 +383,11 @@ augroup filetype_vim
 augroup END
 " }}}
 
-" vim-which-key configuration
-nnoremap <silent> <leader> :<c-u>WhichKey ','<CR>
-vnoremap <silent> <leader> :<c-u>WhichKeyVisual ','<CR>
+" vim-which-key configuration (only if plugin is loaded)
+if exists('g:loaded_which_key')
+  nnoremap <silent> <leader> :<c-u>WhichKey ','<CR>
+  vnoremap <silent> <leader> :<c-u>WhichKeyVisual ','<CR>
+endif
 set timeoutlen=500
 
 " Define which-key dictionary
@@ -488,8 +490,10 @@ let g:which_key_map['V'] = 'reload-vimrc'
 let g:which_key_map['"'] = 'quote-word'
 let g:which_key_map["'"] = 'single-quote-word'
 
-" Register the dictionary
-call which_key#register(',', "g:which_key_map")
+" Register the dictionary (only if which-key is loaded)
+if exists('g:loaded_which_key')
+  call which_key#register(',', "g:which_key_map")
+endif
 
 " vim-which-key styling
 let g:which_key_use_floating_win = 0
