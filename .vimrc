@@ -1,21 +1,26 @@
-" don't bother with vi compatibility
-set nocompatible
+" Vundle setup - MUST be at the top
+set nocompatible              " required
+filetype off                  " required
 
 " enable syntax highlighting
 syntax enable
 
-" configure Vundle
-filetype on " without this vim emits a zero exit status, later, because of :ft off
-filetype off
+" Set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
-" install Vundle bundles
+" Let Vundle manage Vundle (required)
+Plugin 'VundleVim/Vundle.vim'
+
+" Load plugins from bundle files
 if filereadable(expand("~/.vimrc.bundles"))
   source ~/.vimrc.bundles
+endif
+if filereadable(expand("~/.vimrc.bundles.local"))
   source ~/.vimrc.bundles.local
 endif
 
+" All plugins must be added before this line
 call vundle#end()
 
 " ensure ftdetect et al work by including this after the Vundle stuff
