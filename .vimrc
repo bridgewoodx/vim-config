@@ -9,10 +9,7 @@ syntax enable
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
-" Let Vundle manage Vundle (required)
-Plugin 'VundleVim/Vundle.vim'
-
-" Load plugins from bundle files
+" Load plugins from bundle files (includes Vundle.vim plugin declaration)
 if filereadable(expand("~/.vimrc.bundles"))
   source ~/.vimrc.bundles
 endif
