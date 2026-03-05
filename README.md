@@ -93,7 +93,7 @@ Add to your `~/.bashrc` or `~/.zshrc` to automatically update your configuration
    Plugin 'preservim/nerdtree'
    ```
 
-2. **Or edit** `~/vim-config/.vimrc.bundles.local` for personal plugins (optional)
+2. **Or edit** `~/.vimrc.bundles.local` (in home directory) for personal plugins (optional)
 
 3. **Install**:
    ```bash
