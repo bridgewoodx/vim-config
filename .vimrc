@@ -65,8 +65,6 @@ set splitright
 let mapleader = ','
 
 " plugin settings
-" CtrlP settings (kept for fallback; fzf is primary)
-let g:ctrlp_match_window = 'order:ttb,max:20'
 let g:NERDSpaceDelims=1
 let g:gitgutter_enabled = 0
 
@@ -78,9 +76,6 @@ if executable('rg')
   set grepprg=rg\ --vimgrep\ --smart-case
   set grepformat=%f:%l:%c:%m
 endif
-
-" Keep CtrlP cache across sessions for faster startup (use ,T to refresh)
-let g:ctrlp_clear_cache_on_exit = 0
 
 " fzf settings
 let g:fzf_layout = { 'down': '~40%' }
