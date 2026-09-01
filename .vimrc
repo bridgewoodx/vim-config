@@ -63,9 +63,9 @@ set splitright
 
 " keyboard shortcuts
 let mapleader = ','
-inoremap jj <ESC>
 
 " plugin settings
+" CtrlP settings (kept for fallback; fzf is primary)
 let g:ctrlp_match_window = 'order:ttb,max:20'
 let g:NERDSpaceDelims=1
 let g:gitgutter_enabled = 0
@@ -73,14 +73,28 @@ let g:gitgutter_enabled = 0
 " use the new SnipMate parser
 let g:snipMate = { 'snippet_version' : 1 }
 
-" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
-if executable('ag')
-  " Use Ag over Grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+" Use ripgrep for :grep
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --smart-case
+  set grepformat=%f:%l:%c:%m
 endif
+
+" Keep CtrlP cache across sessions for faster startup (use ,T to refresh)
+let g:ctrlp_clear_cache_on_exit = 0
+
+" fzf settings
+let g:fzf_layout = { 'down': '~40%' }
+" Use rg for fzf file listing (respects .gitignore)
+if executable('rg')
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --glob "!.git"'
+endif
+
+" :Rg searches cwd; :RG <pattern> <dir> searches a specific directory
+command! -nargs=+ -complete=dir RG call s:RgInDir(<f-args>)
+function! s:RgInDir(pattern, ...)
+  let dir = a:0 ? a:1 : '.'
+  call fzf#vim#grep('rg --column --line-number --no-heading --color=always --smart-case ' . shellescape(a:pattern) . ' ' . shellescape(dir), fzf#vim#with_preview(), 0)
+endfunction
 
 " File type settings
 augroup filetype_settings
@@ -230,13 +244,8 @@ noremap <leader>8 8gt
 noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
 noremap <leader>n :tabnext<cr>
-noremap <leader>, :tabnext<cr>
-noremap <leader>,, :tabp<cr>
 nnoremap <silent> <c-n> gt<cr>
-nnoremap <silent> <c-p> gT<cr>
-nnoremap gb gT
-noremap <leader>tp :tabp<cr>
-noremap <leader>new :tabnew<cr>
+noremap <leader>Tp :tabp<cr>
 noremap <leader>j 10j
 noremap <leader>k 10k
 
@@ -248,7 +257,6 @@ noremap <leader>co :copen<CR>
 noremap <leader>cc :cclose<CR>
 
 nnoremap <silent> <c-s> :w<cr>
-nnoremap <silent> <c-t> :tabnew<cr>
 " Move current tab to first position
 nnoremap <silent> <leader>mf :tabm 0<CR>
 " Move current tab to previous position (one position to the left)
@@ -275,26 +283,17 @@ nnoremap L :bn<cr>
 
 " Additional keyboard shortcuts from main .vimrc
 nnoremap <leader>al :Align
-nnoremap <leader>a :Ag<space>
-nnoremap <leader>bl :CtrlPBuffer<CR>
+nnoremap <leader>a :Rg<space>
+nnoremap <leader>bl :Buffers<CR>
 nnoremap <leader>d :NERDTreeToggle<CR>
 nnoremap <leader>f :NERDTreeFind<CR>
-nnoremap <leader>t :CtrlP<CR>
-nnoremap <leader>p :CtrlP<CR>
-nnoremap <leader>T :CtrlPClearCache<CR>:CtrlP<CR>
+nnoremap <leader>t :Files<CR>
 nnoremap <leader>] :TagbarToggle<CR>
 nnoremap <leader><space> :call whitespace#strip_trailing()<CR>
 nnoremap <leader>gg :GitGutterToggle<CR>
-noremap <silent> <leader>V :source ~/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
 
 " in case you forgot to sudo
 cnoremap w!! %!sudo tee > /dev/null %
-
-" Use leader-w[hjkl] to select the active split!
-nmap <leader>wh :wincmd h<CR>
-nmap <leader>wj :wincmd j<CR>
-nmap <leader>wk :wincmd k<CR>
-nmap <leader>wl :wincmd l<CR>
 
 " Save to Session.vim. The following is not working
 " nnoremap <lead>q :mks!<CR> :q<CR>
@@ -322,11 +321,6 @@ map <leader>[ <Plug>RubyFileRun
 " change from <Leader>l to <Leader>/
 map <leader>/ <Plug>RubyTestRunLast
 
-" You might want to set these session options in your vimrc. Especially options is annoying when you've changed your vimrc after you've saved the session.
-set ssop-=options    " do not store global and local values in a session
-set ssop-=folds      " do not store folds
-
-
 " Git
 function GitDiff()
     :silent write
@@ -344,35 +338,6 @@ nnoremap <leader>gd :call GitDiff()<cr>
 :nnoremap <leader>el :vsplit $MYVIMRC.local<cr>
 " Source vimrc
 :nnoremap <leader>sv :source $MYVIMRC<cr>
-
-" Surround the word with double quotes
-nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
-" Remove double quotes from the word
-nnoremap <leader>"" viw<esc>lxbhx
-
-" Surround the word with single quotes
-nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
-" Remove single quotes from the word
-nnoremap <leader>'' viw<esc>lxbhx
-
-" Use jk to exit insert mode
-:inoremap jk <esc>
-
-" Delete all the text inside the parentheses
-:onoremap p i(
-" Delete all the text inside the single quotes
-:onoremap q i'
-" Delete all the text inside the double quotes
-:onoremap qq i"
-
-" Delete the entire body of the function
-:onoremap b /end<cr>
-
-" Window navigation with Ctrl + hjkl
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
 
 " Better tab navigation
 nnoremap <S-Tab> :tabprevious<CR>
@@ -407,15 +372,12 @@ let g:which_key_map['8'] = 'tab-8'
 let g:which_key_map['9'] = 'tab-9'
 let g:which_key_map['0'] = 'tab-last'
 let g:which_key_map['n'] = 'tab-next'
-let g:which_key_map['t'] = 'ctrlp'
-let g:which_key_map['p'] = 'ctrlp'
-let g:which_key_map['tp'] = 'tab-prev'
-let g:which_key_map[','] = 'tab-next'
-let g:which_key_map['new'] = 'new-tab'
+let g:which_key_map['t'] = 'fzf-files'
+let g:which_key_map['Tp'] = 'tab-prev'
 let g:which_key_map['lt'] = 'last-active-tab'
 
 " Files and buffers
-let g:which_key_map['a'] = 'ag-search'
+let g:which_key_map['a'] = 'rg-search'
 let g:which_key_map.b = {
       \ 'name' : '+buffers',
       \ 'b' : 'last-buffer',
@@ -423,7 +385,6 @@ let g:which_key_map.b = {
       \ }
 let g:which_key_map['d'] = 'nerdtree-toggle'
 let g:which_key_map['f'] = 'nerdtree-find'
-let g:which_key_map['T'] = 'ctrlp-clear'
 
 " Copy paths, quickfix, and close tab
 let g:which_key_map.c = {
@@ -466,14 +427,6 @@ let g:which_key_map.m = {
       \ 'r' : 'move-tab-right',
       \ }
 
-let g:which_key_map.w = {
-      \ 'name' : '+windows',
-      \ 'h' : 'window-left',
-      \ 'j' : 'window-down',
-      \ 'k' : 'window-up',
-      \ 'l' : 'window-right',
-      \ }
-
 " Testing (rubytest)
 let g:which_key_map['\'] = 'run-test'
 let g:which_key_map['['] = 'run-file'
@@ -485,9 +438,8 @@ let g:which_key_map['j'] = 'down-10'
 let g:which_key_map['k'] = 'up-10'
 let g:which_key_map[']'] = 'tagbar-toggle'
 let g:which_key_map[' '] = 'strip-whitespace'
-let g:which_key_map['V'] = 'reload-vimrc'
-let g:which_key_map['"'] = 'quote-word'
-let g:which_key_map["'"] = 'single-quote-word'
+let g:which_key_map['"'] = 'which_key_ignore'
+let g:which_key_map["'"] = 'which_key_ignore'
 
 " Register the dictionary
 call which_key#register(',', "g:which_key_map")

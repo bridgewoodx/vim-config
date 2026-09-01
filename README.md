@@ -40,14 +40,17 @@ Press `<leader>` and wait to see all available commands (vim-which-key).
 | Command | Action |
 |---------|--------|
 | `,d` | Toggle NERDTree |
-| `,p` | Open CtrlP fuzzy finder |
-| `,a` | Search with Ag |
+| `,t` | Fuzzy find files (fzf) |
+| `,a` | Search file contents with ripgrep (fzf) |
+| `:RG pattern dir/` | Search contents in specific directory |
+| `,bl` | Fuzzy buffer list (fzf) |
 | `,1-9` | Go to tab 1-9 |
 | `,n` | Next tab |
+| `,Tp` | Previous tab |
+| `Tab/S-Tab` | Next/previous tab |
 | `,gd` | Git diff current file |
 | `,ev` | Edit vimrc |
 | `,sv` | Reload vimrc |
-| `Ctrl-h/j/k/l` | Navigate windows |
 
 ## Machine-Specific Settings
 
@@ -141,5 +144,6 @@ set t_Co=256
 **Required:** Vim 7.4+, Git
 
 **Optional:** 
-- The Silver Searcher: `brew install the_silver_searcher` (macOS) or `apt-get install silversearcher-ag` (Ubuntu)
+- ripgrep: `brew install ripgrep` (macOS) or `apt-get install ripgrep` (Ubuntu) — used for file content search
+- fzf: installed automatically via Vundle plugin
 - ctags: `brew install ctags` (macOS) or `apt-get install exuberant-ctags` (Ubuntu)
