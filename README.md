@@ -7,6 +7,9 @@ Centralised Vim configuration synced across multiple servers. Use `.vimrc.local`
 ### First Time Setup
 
 ```bash
+# Install dependencies
+brew install ripgrep  # macOS (use apt-get install ripgrep on Ubuntu)
+
 # Clone repo
 git clone https://github.com/bridgewoodx/vim-config.git ~/.vim-config
 ln -s ~/.vim-config/.vimrc ~/.vimrc
@@ -22,6 +25,9 @@ touch ~/.vimrc.local
 ### Setup on New Server
 
 ```bash
+# Install dependencies
+brew install ripgrep  # or: apt-get install ripgrep
+
 # Same steps as above
 git clone https://github.com/bridgewoodx/vim-config.git ~/.vim-config
 ln -s ~/.vim-config/.vimrc ~/.vimrc
@@ -141,9 +147,7 @@ cp ~/.vimrc.bundles ~/vim-config/.vimrc.bundles
 set t_Co=256
 ```
 
-**Required:** Vim 7.4+, Git
+**Required:** Vim 7.4+, Git, [ripgrep](https://github.com/BurntSushi/ripgrep) (`brew install ripgrep` on macOS, `apt-get install ripgrep` on Ubuntu)
 
 **Optional:** 
-- ripgrep: `brew install ripgrep` (macOS) or `apt-get install ripgrep` (Ubuntu) — used for file content search
-- fzf: installed automatically via Vundle plugin
 - ctags: `brew install ctags` (macOS) or `apt-get install exuberant-ctags` (Ubuntu)
